@@ -2,13 +2,10 @@ import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { RecipeModule } from './src/modules/recipe/recipe.module';
-import {
-  Ingredient,
-  Recipe,
-} from './src/modules/recipe/entities/recipe.entity';
+import { RecipeModule } from './modules/recipe/recipe.module';
+import { Ingredient, Recipe } from './modules/recipe/entities/recipe.entity';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { validate } from './src/config/env.validation';
+import { validate } from './config/env.validation';
 
 @Module({
   imports: [
@@ -26,8 +23,8 @@ import { validate } from './src/config/env.validation';
         password: configService.get<string>('DB_PASSWORD'),
         database: configService.get<string>('DB_NAME'),
         entities: [Recipe, Ingredient],
-        synchronize: configService.get<boolean>('DB_SYNCHRONIZATION') || false,
-        logging: configService.get<boolean>('DB_LOGGING') || false,
+        synchronize: false,
+        logging: configService.get<boolean>('DB_LOGGING'),
       }),
     }),
     RecipeModule,

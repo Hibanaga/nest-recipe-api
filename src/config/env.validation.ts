@@ -36,8 +36,6 @@ class EnviromentVariables {
   @IsBoolean()
   DB_LOGGING: boolean;
 
-  @IsNotEmpty()
-  @IsBoolean()
   DB_SYNCHRONIZATION: boolean;
 }
 
