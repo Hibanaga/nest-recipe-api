@@ -7,9 +7,13 @@ import {
   Ingredient,
   Recipe,
 } from './src/modules/recipe/entities/recipe.entity';
+import { ConfigModule } from '@nestjs/config';
 
 @Module({
   imports: [
+    ConfigModule.forRoot({
+      isGlobal: true,
+    }),
     TypeOrmModule.forRoot({
       type: 'postgres',
       host: 'localhost',
