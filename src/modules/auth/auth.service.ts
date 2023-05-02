@@ -1,33 +1,42 @@
-import { Injectable } from '@nestjs/common';
-import { CreateAuthDto } from './dto/create-auth.dto';
-import { UpdateAuthDto } from './dto/update-auth.dto';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { AuthUser } from './entities/auth.entity';
 import { Repository } from 'typeorm';
+import { User, UserRole } from './entities/user.entity';
+import { LoginAuthDto } from './dto/login-auth.dto';
+import { RegisterAuthDto } from './dto/register-auth.dto';
 
 @Injectable()
 export class AuthService {
   constructor(
-    @InjectRepository(AuthUser) private userRepository: Repository<AuthUser>,
+    @InjectRepository(User) private userRepository: Repository<User>,
   ) {}
 
-  create(createAuthDto: CreateAuthDto) {
-    return 'This action adds a new auth';
+  async single(loginDto: LoginAuthDto) {
+    return 'login route';
   }
 
-  findAll() {
-    return `This action returns all auth`;
+  async create(registerDto: RegisterAuthDto) {
+    const existingUser = await this.userRepository.findOne({
+      where: { email: registerDto.email },
+    });
+
+    if (existingUser) {
+      throw new HttpException(
+        'Email already registered!',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
+    await this.userRepository.create({
+      email: registerDto.email,
+      password: registerDto.password,
+      role: UserRole.User,
+    });
+
+    return 'register route';
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} auth`;
-  }
-
-  update(id: number, updateAuthDto: UpdateAuthDto) {
-    return `This action updates a #${id} auth`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} auth`;
+  async refreshToken(refreshToken: string) {
+    return 'refresh token route';
   }
 }
