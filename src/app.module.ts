@@ -7,6 +7,7 @@ import { Ingredient, Recipe } from './modules/recipe/entities/recipe.entity';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { validate } from './config/env.validation';
 import { AuthModule } from './modules/auth/auth.module';
+import { User } from './modules/auth/entities/user.entity';
 
 @Module({
   imports: [
@@ -23,7 +24,7 @@ import { AuthModule } from './modules/auth/auth.module';
         username: configService.get<string>('DB_USERNAME'),
         password: configService.get<string>('DB_PASSWORD'),
         database: configService.get<string>('DB_NAME'),
-        entities: [Recipe, Ingredient],
+        entities: [Recipe, Ingredient, User],
         synchronize: false,
         logging: configService.get<boolean>('DB_LOGGING'),
       }),

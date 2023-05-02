@@ -19,5 +19,5 @@ export class RegisterAuthDto {
 
   @IsEnum(UserRole)
   @IsNotEmpty()
-  role: string;
+  role?: string;
 }
