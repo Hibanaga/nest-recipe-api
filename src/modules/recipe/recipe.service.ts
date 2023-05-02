@@ -4,15 +4,23 @@ import { UpdateRecipeDto } from './dto/update-recipe.dto';
 import { Repository } from 'typeorm';
 import { Recipe } from './entities/recipe.entity';
 import { InjectRepository } from '@nestjs/typeorm';
+import { User } from '../auth/entities/user.entity';
 
 @Injectable()
 export class RecipeService {
   constructor(
     @InjectRepository(Recipe) private recipeRepository: Repository<Recipe>,
+    @InjectRepository(User) private userRepository: Repository<User>,
   ) {}
 
-  create(recipe: CreateRecipeDto) {
-    return this.recipeRepository.save({ ...recipe });
+  async create(recipe: CreateRecipeDto, email: string) {
+    const user = await this.userRepository.findOne({ where: { email } });
+
+    if (!user) {
+      throw new HttpException('Invalid credentials!', HttpStatus.BAD_REQUEST);
+    }
+
+    return this.recipeRepository.save({ ...recipe, user });
   }
 
   list() {

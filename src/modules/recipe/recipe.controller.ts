@@ -1,26 +1,26 @@
 import {
-  Controller,
-  Get,
-  Post,
   Body,
-  Param,
+  Controller,
   Delete,
-  Put,
+  Get,
+  Param,
   ParseUUIDPipe,
-  ValidationPipe,
+  Post,
+  Put,
+  UseGuards,
+  Request,
 } from '@nestjs/common';
 import { RecipeService } from './recipe.service';
 import { CreateRecipeDto } from './dto/create-recipe.dto';
 import { UpdateRecipeDto } from './dto/update-recipe.dto';
+import { AccessTokenGuard } from '../auth/guard/access-token.guard';
+import { Role } from '../auth/decorators/role';
+import { UserRole } from '../auth/entities/user.entity';
+import { RoleGuard } from '../auth/guard/authorization.guard';
 
 @Controller('recipe')
 export class RecipeController {
   constructor(private readonly recipeService: RecipeService) {}
-
-  @Post()
-  create(@Body() recipeDto: CreateRecipeDto) {
-    return this.recipeService.create(recipeDto);
-  }
 
   @Get()
   findAll() {
@@ -32,6 +32,16 @@ export class RecipeController {
     return this.recipeService.single(id);
   }
 
+  @Role(UserRole.User)
+  @UseGuards(AccessTokenGuard, RoleGuard)
+  @Post()
+  create(@Body() recipeDto: CreateRecipeDto, @Request() req) {
+    const { sub } = req.user;
+    return this.recipeService.create(recipeDto, sub);
+  }
+
+  @Role(UserRole.Admin)
+  @UseGuards(AccessTokenGuard, RoleGuard)
   @Put(':id')
   update(
     @Param('id', new ParseUUIDPipe()) id: string,
