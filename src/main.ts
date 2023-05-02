@@ -1,7 +1,9 @@
-import { NestFactory } from '@nestjs/core';
+import { HttpAdapterHost, NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { HttpExceptionFilter } from './modules/auth/global-filters/http-exception.filter';
+import { AllExceptionFilter } from './modules/auth/global-filters/all-exception.filter';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -9,6 +11,12 @@ async function bootstrap() {
   const configService = app.get(ConfigService);
 
   const port = configService.get<number>('APP_PORT');
+  const httpAdapterHost = app.get(HttpAdapterHost);
+
+  app.useGlobalFilters(
+    new HttpExceptionFilter(configService),
+    new AllExceptionFilter(httpAdapterHost),
+  );
 
   await app.listen(port);
 }
