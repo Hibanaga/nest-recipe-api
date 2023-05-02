@@ -6,6 +6,7 @@ import {
   OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
+import { User } from '../../auth/entities/user.entity';
 
 @Entity({ name: 'recipe' })
 export class Recipe {
@@ -20,6 +21,9 @@ export class Recipe {
     eager: true,
   })
   ingredients: Ingredient[];
+
+  @ManyToOne(() => User, (authUser) => authUser.recipes)
+  user: User;
 }
 
 @Entity({ name: 'ingredient' })
