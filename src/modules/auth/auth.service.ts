@@ -7,6 +7,7 @@ import { RegisterAuthDto } from './dto/register-auth.dto';
 import { compare, hash } from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
+import { InvalidCredentialsExeption } from './exeptions/invalid-credentials.exeption';
 
 export interface JWTTokens {
   token: string;
@@ -27,13 +28,13 @@ export class AuthService {
     });
 
     if (!user) {
-      throw new HttpException('Invalid credentials!', HttpStatus.BAD_REQUEST);
+      throw new InvalidCredentialsExeption();
     }
 
     const validPassword = await compare(loginDto.password, user.password);
 
     if (!validPassword) {
-      throw new HttpException('Invalid credentials!', HttpStatus.BAD_REQUEST);
+      throw new InvalidCredentialsExeption();
     }
 
     return this.getTokens(user);
