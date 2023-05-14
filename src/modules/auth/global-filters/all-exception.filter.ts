@@ -24,7 +24,7 @@ export class AllExceptionFilter implements ExceptionFilter {
     const httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
 
     const responseBody = {
-      status: HttpStatus,
+      status: httpStatus,
       message: 'Interval server error',
     };
 
